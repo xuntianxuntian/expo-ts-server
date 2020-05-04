@@ -4,8 +4,7 @@ import { MongoClient, DBConfig } from "./mongo";
 
 
 
-
-export const connectToDB = async (config: Partial<DBConfig>) => {
+export const ConnectToDB = async (config: DBConfig) => {
     const DBClient = new MongoClient(config);
-    
+    DBClient.connect();
 };

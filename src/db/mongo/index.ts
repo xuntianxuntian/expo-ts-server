@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { appInitialLog } from "../../utils/log";
 
-mongoose.Promise = require('bluebird')
+mongoose.Promise = require("bluebird");
 
 export interface DBConfig {
   DB: string;
@@ -12,22 +13,22 @@ export interface DBConfig {
 }
 
 export class MongoClient {
-  private config: DBConfig;
-  constructor(config: Partial<DBConfig>) {
-    this.config = {
-      DB: "mongo",
-      DB_HOST: "localhost",
-      DB_PORT: 27017,
-      DB_NAME: "test",
-      DB_USERNAME: "xixialin",
-      DB_PSWD: "123456",
-      ...config,
-    };
+  private dbConfig: DBConfig;
+  constructor(config: DBConfig) {
+    this.dbConfig = config;
   }
   connect() {
-      let uri = `mongodb://${this.config.DB_USERNAME}:${this.config.DB_PSWD}:@${this.config.DB_HOST}:${this.config.DB_PORT}/${this.config.DB_NAME}`;
-      mongoose.connect(uri)
-        .then(resolved => {})
-        .catch()
+    let uri = `mongodb://${this.dbConfig.DB_USERNAME}:${this.dbConfig.DB_PSWD}@${this.dbConfig.DB_HOST}:${this.dbConfig.DB_PORT}/${this.dbConfig.DB_NAME}`;
+    mongoose
+      .connect(uri)
+      .then(() =>
+        appInitialLog.notice({ level: "info", message: "MongoDB 链接成功..." })
+      )
+      .catch((err) =>
+        appInitialLog.error({
+          level: "error",
+          message: `MongoDB 链接错误:${err.message}`
+        })
+      );
   }
 }
